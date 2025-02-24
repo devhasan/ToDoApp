@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %} {{block.super}} | Create Task {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <h1 class="text-center my-4">Create Task</h1>
+    
+        <a href="{% url 'home' %}" class="btn btn-outline-success btn-sm" type="button">Back</a>
+
+    <div class="card text-center my-3">
+        <div class="card-body bg-light py-5">
+            <div class="col-md-8 col-lg-8 mx-auto">
+
+                <form method="POST" class="needs-validation">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="date" class="form-label">Due Date</label>
+                            {{ form.date }}                            
+                            {% if form.date.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.date.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="time" class="form-label">Due Time</label>
+                            {{ form.time }}
+                            {% if form.time.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.time.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.title.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.description.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="country" class="form-label">Category</label>
+                            {{ form.category }}                            
+                            {% if form.category.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.category.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="state" class="form-label">Priority</label>
+                            {{ form.priority }}
+                            {% if form.priority.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.priority.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="zip" class="form-label">Assigned</label>
+                            {{ form.assigned_to }}
+                            {% if form.assigned_to.errors %}
+                            <div class="text-danger text-start">
+                                {{ form.assigned_to.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button href="#" class="btn btn-primary" type="submit">
+                            {% if form.instance.pk %}Update{% else %}Save{% endif %}
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endblock content %}

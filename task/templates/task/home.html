@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+
+{% block title %} {{block.super}} | Home {% endblock %}
+{% block user %} {{block.super}} {{user}} {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <h1 class="text-center my-5">Personal Task</h1>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                Tasks
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-tab-pane"
+                type="button" role="tab" aria-controls="pending-tab-pane" aria-selected="false">
+                Pending
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="urgent-tab" data-bs-toggle="tab" data-bs-target="#urgent-tab-pane"
+                type="button" role="tab" aria-controls="urgent-tab-pane" aria-selected="false">
+                Urgent
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed-tab-pane"
+                type="button" role="tab" aria-controls="completed-tab-pane" aria-selected="false">
+                Completed
+            </button>
+        </li>
+
+        <li class="nav-item ms-auto" role="presentation">
+            <form class="mx-3" role="search">
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" />
+            </form>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <a href="{% url 'createtask' %}">
+                <i class="bi bi-calendar2-plus-fill" style="font-size: 1.7rem; color: green;"></i>
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+            tabindex="0">
+            <div class="card text-center my-3">
+                <div class="card-header pb-0">
+
+
+                    <table class="table table align-middle table-striped">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Title</th>
+                                <th>Time</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        {% for task in tasks %}
+                        <tr>
+                            <td>
+                                {% if task.status == 'pending' %}
+                                <i class="bi bi-circle ms-2" style="font-size: 1.5rem; color: rgb(0, 0, 0);"></i>
+                                {% elif task.status == 'progress' %}
+                                <i class="bi bi-exclamation-triangle-fill ms-2"
+                                    style="font-size: 1.5rem; color: rgb(202, 13, 13);"></i>
+                                {% elif task.status == 'completed' %}
+                                <i class="bi bi-check-circle-fill ms-2" style="font-size: 1.5rem; color: green;"></i>
+                                {% else %}
+                                <i class="bi bi-circle ms-2" style="font-size: 1.5rem; color: rgb(0, 0, 0);"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <h6>{{task.title}}</h6>
+                            </td>
+                            <td>
+                                <P class="text-body-secondary">{{task.date}} <br>{{task.time}}</P>
+                            </td>
+                            <td>
+                                <p>{{task.category}}</p>
+                            </td>
+                            <td>
+                                <P class="text-body-secondary">
+
+                                    <span class="badge rounded-pill 
+                                        {% if task.priority == 'Low' %}text-bg-secondary
+                                        {% elif task.priority == 'Medium' %}text-bg-warning
+                                        {% elif task.priority == 'High' %}text-bg-danger 
+                                         {% else %}text-bg-secondary
+                                        {% endif %}">
+                                        {{task.priority}}
+                                    </span>
+
+                                </P>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button class="btn btn-outline-primary"
+                                        onclick="handleOnClick('{{task.id}}','{{task.title}}', '{{task.description}}','{{task.category}}', '{{task.date}}','{{task.time}}','{{task.user}}', '{{task.created_at}}','{{task.assigned_to}}','{{task.status}}')"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <a href="{% url 'edit' task.id %}" class="btn btn-outline-success">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <form action="{% url 'delete' task.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger"
+                                            onclick="return confirm('Are you sure want to delete this task?')">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pending-tab-pane" role="tabpanel" aria-labelledby="pending-tab" tabindex="0">
+            <div class="card text-center my-3">
+                <div class="card-header pb-0">
+                    <table class="table table-borderless align-middle">
+                        <tr>
+                            <td><i class="bi bi-exclamation-triangle-fill ms-2"
+                                    style="font-size: 1.5rem; color: rgb(202, 13, 13);"></i></td>
+                            <td class="border-end">
+                                <h6>Ostad Live Class</h6>
+                            </td>
+                            <td class="border-end">
+                                <p>With supporting text below as a natural lead-in to additional content.
+                                </p>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Feb 8, 2025 <br>23:30</P>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Hasan Mahmud</P>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"><i class="bi bi-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-success"><i
+                                            class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-outline-danger"><i
+                                            class="bi bi-trash3"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="urgent-tab-pane" role="tabpanel" aria-labelledby="urgent-tab" tabindex="0">
+            <div class="card text-center my-3">
+                <div class="card-header pb-0">
+                    <table class="table table-borderless align-middle">
+                        <tr>
+                            <td><i class="bi bi-check-circle-fill ms-2" style="font-size: 1.5rem; color: green;"></i>
+                            </td>
+                            <td class="border-end">
+                                <h6>Ostad Live Class</h6>
+                            </td>
+                            <td class="border-end">
+                                <p>With supporting text below as a natural lead-in to additional content.
+                                </p>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Feb 8, 2025 <br>23:30</P>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Hasan Mahmud</P>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">
+                                        <i class="bi bi-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-success"><i
+                                            class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-outline-danger"><i
+                                            class="bi bi-trash3"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="card text-center my-3">
+                <div class="card-header pb-0">
+                    <table class="table table-borderless align-middle">
+                        <tr>
+                            <td><i class="bi bi-exclamation-triangle-fill ms-2"
+                                    style="font-size: 1.5rem; color: rgb(202, 13, 13);"></i></td>
+                            <td class="border-end">
+                                <h6>Ostad Live Class</h6>
+                            </td>
+                            <td class="border-end">
+                                <p>With supporting text below as a natural lead-in to additional content.
+                                </p>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Feb 8, 2025 <br>23:30</P>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Hasan Mahmud</P>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"><i class="bi bi-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-success"><i
+                                            class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-outline-danger"><i
+                                            class="bi bi-trash3"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="completed-tab-pane" role="tabpanel" aria-labelledby="completed-tab" tabindex="0">
+            <div class="card text-center my-3">
+                <div class="card-header pb-0">
+                    <table class="table table-borderless align-middle">
+                        <tr>
+                            <td><i class="bi bi-check-circle-fill ms-2" style="font-size: 1.5rem; color: green;"></i>
+                            </td>
+                            <td class="border-end">
+                                <h6>Ostad Live Class</h6>
+                            </td>
+                            <td class="border-end">
+                                <p>With supporting text below as a natural lead-in to additional content.
+                                </p>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Feb 8, 2025 <br>23:30</P>
+                            </td>
+                            <td class="border-end">
+                                <P class="text-body-secondary">Hasan Mahmud</P>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-outline-primary"><i
+                                            class="bi bi-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-success"><i
+                                            class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-outline-danger"><i
+                                            class="bi bi-trash3"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!--Details Task Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Task Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-borderless align-middle">
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Task</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="title"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Date & Time</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="date"></p>
+                            <p id="time"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Category</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="category"></p>
+                        </td>
+                    </tr>
+                    <td class="border-bottom">
+                        <h6>Assigned to</h6>
+                    </td>
+                    <td class="border-bottom">
+                        <p id="assigned_to"></p>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Description</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="description"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Created by</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="created_by"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Created at</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="created_at"> </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">
+                            <h6>Status</h6>
+                        </td>
+                        <td class="border-bottom">
+                            <p id="status" class="text-danger">Pending</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning">Edit</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    {% comment %} function handleOnClick(id, title, description, category, date, time, created_by, created_at, assigned_to, status) {
+        {% endcomment %}
+
+        function handleOnClick(id, title, description, category, date, time, created_by, created_at, assigned_to, status) {
+            document.getElementById('title').innerText = title
+            document.getElementById('date').innerText = date
+            document.getElementById('time').innerText = time
+            document.getElementById('assigned_to').innerText = assigned_to
+            document.getElementById('category').innerText = category
+            document.getElementById('description').innerText = description
+            document.getElementById('created_by').innerText = created_by
+            document.getElementById('created_at').innerText = created_at
+            document.getElementById('status').innerText = status
+
+        }
+
+</script>
+{% endblock content %}

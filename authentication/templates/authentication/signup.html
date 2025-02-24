@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %} {{block.super}} | Sign Up {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <h1 class="text-center my-4">Sign Up</h1>
+    <div class="card text-center my-3">
+        <div class="card-body bg-light py-5">
+            <div class="col-md-8 col-lg-8 mx-auto">
+
+                <form method="POST" class="needs-validation">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form  %}
+                        <div class="col-sm-12">
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="text-danger text-start">
+                                {{ field.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% comment %} <div class="col-sm-6">
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.first_name.errors.0 }}
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="col-sm-6">
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.last_name.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.username.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.email.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password1.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password2.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                         {% endcomment %}
+
+                    </div>
+
+                    <hr class="my-4">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-primary" type="submit">Sign Up</button>
+                        <p>or</p>
+                        <a href="{% url 'login' %}" class="btn btn-outline-success btn-sm" type="button">I have an account</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% endblock content %}
